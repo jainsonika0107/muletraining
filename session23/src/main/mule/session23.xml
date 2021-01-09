@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="de71e27e-cf45-48bd-810a-54817917bc2e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="session23Flow" doc:id="ebfee31f-ad9a-4c67-ab73-5df01f31f7cd" >
+		<http:listener doc:name="Listener" doc:id="a7d51879-b05f-44ab-9429-881a6db5f62b" config-ref="HTTP_Listener_config" path="api/session23"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0ed4c1fb-3be1-415d-be47-6e0b83f35d60" />
+		<choice doc:name="Choice" doc:id="59ea18da-b36e-4185-81e5-d95117afdec5" >
+			<when expression="#[payload.customerName==null or payload.city==null]">
+				<raise-error doc:name="Raise error" doc:id="b0d1460e-b107-4993-aa5a-992890f77d71" type="MISSING-DATA:ERROR"/>
+				<until-successful maxRetries="5" doc:name="Until Successful" doc:id="b6238852-bb2b-4304-a719-a483f7e4db88" />
+			</when>
+			<otherwise >
+				<file:write doc:name="Write" doc:id="41b1bfef-3e93-47ad-9672-2b701053bcb8" path="D:\studio-workspace\session23\customer.json"/>
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="5a95a721-7181-4912-a66e-9468b8687af7" type="MISSING-DATA:ERROR">
+				<ee:transform doc:name="Transform Message" doc:id="5fa1e202-c944-4a40-8a44-33a92afd622d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "This is on error propagate"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
