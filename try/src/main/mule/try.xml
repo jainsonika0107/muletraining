@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="tryFlow1" doc:id="e1057d4c-4808-459c-b713-10111a2d5f85" >
+		<http:request method="GET" doc:name="Request" doc:id="cccd323f-993c-498a-a052-0ee869dd668b" />
+	</flow>
+	<flow name="tryFlow2" doc:id="06f97268-52ce-4e09-bc7e-ab01bdd02442" >
+		<http:request method="GET" doc:name="Request" doc:id="fcc7c093-02fc-42ad-9b34-cdf561740fe5" />
+	</flow>
+	<flow name="tryFlow" doc:id="da17c527-3646-498b-a767-66d18aa4f155" >
+		<http:listener doc:name="Listener" doc:id="4e0932af-f755-42c0-9c83-4df9fbb2aa5d" />
+		<wsc:consume doc:name="Consume" doc:id="d8c65c55-285f-4962-a81d-eb4f844bca74" />
+	</flow>
+</mule>
