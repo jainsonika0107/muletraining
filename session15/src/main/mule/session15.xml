@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8d5be7ff-1a31-4ee2-abb7-8769a87d27cc" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="4883aaef-f818-4d78-9103-8a5648f40643" >
+		<db:my-sql-connection host="sql9.freesqldatabase.com" port="3306" user="sql9376825" password="yyCjCTluSa" database="sql9376825" />
+	</db:config>
+	<flow name="session15Flow1" doc:id="57a7d0b0-c53b-41d1-bdaa-4d9da75396d3" >
+		<http:listener doc:name="Listener" doc:id="68b968e3-adb6-4f7a-92f9-a1e2bd005e0d" path="/api/session15" config-ref="HTTP_Listener_config"/>
+		<logger level="ERROR" doc:name="Logger" doc:id="31dc50ce-94cb-4ff3-9c2a-63d3a1ff57a7" />
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="e40dd851-82d7-4d94-9ebf-46d6e33840f8" variableName="payload1"/>
+		<set-variable value="#[attributes.queryParams.count]" doc:name="CountVariable" doc:id="25ffa267-3fb2-48bf-9add-e88febde7d0b" variableName="CountVariable"/>
+		<db:insert doc:name="Insert" doc:id="4a819a3a-deed-4b04-a423-391688ee106a" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into sql9376825.Customer (Name,Address,Age,Phone) values (:name,:address,:age,:phone)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	name: vars.payload1.data.customer.name,
+	address: vars.payload1.data.customer.address,
+	age: vars.payload1.data.customer.age,
+	phone: vars.payload1.data.customer.phone
+}]]]></db:input-parameters>
+		</db:insert>
+		<db:select doc:name="Select" doc:id="0b27d137-9ff7-4abb-a23b-d20e5faa3bc6" >
+			<db:sql ><![CDATA[select * from customer where :whereClause]]></db:sql>
+			<db:input-parameters ><![CDATA[#[var queryParams={
+	customerName:"Neeraj",
+	customerCity:"Frisco"
+}]]]></db:input-parameters>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="ca0023e2-b66f-4b45-a6b7-29505e4639fb" />
+		<db:delete doc:name="Delete" doc:id="4d4d1e37-7859-46b5-925f-e338cf2f0855" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from sql9376825.Customer where Name = :name or Name = :name1]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	name: vars.payload1.data.customer.name,
+	name1: vars.payload1.data.customer.husband
+}]]]></db:input-parameters>
+		</db:delete>
+		<db:select doc:name="Select" doc:id="1bf5705b-8c34-4906-bc1d-7f36a58d2172" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from sql9376825.Customer LIMIT :count]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	count: vars.CountVariable as Number
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="a6f37c04-6fbd-4b97-be3f-b790efa8c231">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="5be1b986-20f8-4294-a445-c2a02e81feb9" variableName="selectedData"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b78ef7a9-bced-43d4-b6f1-9e3382a93d53" />
+		<db:update doc:name="Update" doc:id="d3fc4b7d-f770-41fd-adcf-e71392f94050" config-ref="Database_Config">
+			<db:sql ><![CDATA[update sql9376825.Customer set Address = :address,Phone = :phone where Name = :name]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	address: vars.payload1.data.customer.address ++"xyz",
+	phone: vars.payload1.data.customer.phone,
+	name: vars.payload1.data.customer.name
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="6e5edef8-bbd1-4ba1-a522-4b072fbd5ca2" />
+		<set-payload value="#[vars.selectedData]" doc:name="Set Payload" doc:id="77b1589d-51c9-40cf-93e7-0552ebd64029" />
+	</flow>
+</mule>

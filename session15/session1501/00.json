@@ -1,0 +1,30 @@
+{
+    "data": { 
+        "customer": 
+            {
+                "name": "Sonika Jain",
+                "age": 32,
+                "id": 123,
+                "address": "12213 summertree dr, frisco,tx-75035",
+                "phone": 210858777
+            } ,  
+        "orders": 
+            [
+            {
+                "itemName": "Skirt",
+                "itemId": "123",
+                "itemColor": "red"
+            },
+            {
+                "itemName": "Pant",
+                "itemId": "345",
+                "itemColor": "456"
+            },
+            {
+                "itemName": "Coat",
+                "itemId": "789",
+                "itemColor": "Black"
+            }
+        ]
+    }
+}
