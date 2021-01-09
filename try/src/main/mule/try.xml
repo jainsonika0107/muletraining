@@ -7,6 +7,5 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
 	<flow name="tryFlow" doc:id="da17c527-3646-498b-a767-66d18aa4f155" >
 		<http:listener doc:name="Listener" doc:id="4e0932af-f755-42c0-9c83-4df9fbb2aa5d" />
-		<wsc:consume doc:name="Consume" doc:id="d8c65c55-285f-4962-a81d-eb4f844bca74" />
 	</flow>
 </mule>
